@@ -16,11 +16,7 @@ offset_right = 320.0
 offset_bottom = 640.0
 color = Color(1, 0.023529412, 0.023529412, 1)
 
-[node name="ActivePiece" type="ColorRect" parent="." unique_id=824237910]
-visible = false
-offset_right = 32.0
-offset_bottom = 32.0
-color = Color(0.003921569, 0.654902, 1, 1)
+[node name="ActivePiece" type="Node2D" parent="." unique_id=189349518]
 
 [node name="GravityTimer" type="Timer" parent="." unique_id=859660342]
 wait_time = 0.5
