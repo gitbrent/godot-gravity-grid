@@ -1,38 +1,90 @@
 [gd_scene format=3 uid="uid://b6yq48f44p5je"]
 
 [ext_resource type="Script" uid="uid://dtxit1j5c8fdb" path="res://scenes/game.gd" id="1_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://0uow7lx0oaje" path="res://scenes/game_world.tscn" id="2_yqjtg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqjtg"]
+bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lnu2h"]
+bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
 
 [node name="Game" type="Node2D" unique_id=1359667113]
 script = ExtResource("1_uwrxv")
 
+[node name="GameWorld" parent="." unique_id=1751805160 instance=ExtResource("2_yqjtg")]
+position = Vector2(160, 0)
+
 [node name="Background" type="ColorRect" parent="." unique_id=1686890138]
+visible = false
 offset_right = 320.0
 offset_bottom = 640.0
 color = Color(0.13333334, 0.13333334, 0.13333334, 1)
 
-[node name="Floor" type="ColorRect" parent="." unique_id=723805171]
-offset_top = 608.0
-offset_right = 320.0
-offset_bottom = 640.0
-color = Color(1, 0.023529412, 0.023529412, 1)
-
-[node name="ActivePiece" type="Node2D" parent="." unique_id=189349518]
-
-[node name="GravityTimer" type="Timer" parent="." unique_id=859660342]
-wait_time = 0.5
-
-[node name="StartButton" type="Button" parent="." unique_id=1547140860]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 107.0
-offset_top = 295.0
-offset_right = 213.0
-offset_bottom = 326.0
+[node name="ColorRect" type="ColorRect" parent="." unique_id=129589427]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.13725491, 0.13725491, 0.13725491, 1)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=73125386]
+
+[node name="HUD" type="Control" parent="UI" unique_id=1108870638]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD" unique_id=867969968]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="LeftStats" type="Panel" parent="UI/HUD/HBoxContainer" unique_id=1774482826]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
+
+[node name="GamePlaceholder" type="Control" parent="UI/HUD/HBoxContainer" unique_id=793255553]
+custom_minimum_size = Vector2(320, 640)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="RightStats" type="Panel" parent="UI/HUD/HBoxContainer" unique_id=1811104961]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_lnu2h")
+
+[node name="MainMenu" type="Control" parent="UI" unique_id=1196798541]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/MainMenu" unique_id=611099528]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MainMenu/CenterContainer" unique_id=51651952]
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="UI/MainMenu/CenterContainer/VBoxContainer" unique_id=1547140860]
+layout_mode = 2
 size_flags_vertical = 4
 text = "START GAME"
 metadata/_edit_use_anchors_ = true

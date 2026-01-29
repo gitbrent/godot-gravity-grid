@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://0uow7lx0oaje"]
+
+[ext_resource type="Script" uid="uid://bl51upkypl0xh" path="res://scenes/grid_background.gd" id="1_47u71"]
+[ext_resource type="Texture2D" uid="uid://cklca821tk7k4" path="res://white_tile.tres" id="2_ywgp6"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lbhrr"]
+texture = ExtResource("2_ywgp6")
+texture_region_size = Vector2i(32, 32)
+0:0/next_alternative_id = 8
+0:0/0 = 0
+0:0/1 = 1
+0:0/1/modulate = Color(0, 1, 1, 1)
+0:0/2 = 2
+0:0/2/modulate = Color(1, 1, 0, 1)
+0:0/3 = 3
+0:0/3/modulate = Color(0.81352156, 0.38857287, 0.97269243, 1)
+0:0/4 = 4
+0:0/4/modulate = Color(0, 1, 0, 1)
+0:0/5 = 5
+0:0/5/modulate = Color(1, 0, 0, 1)
+0:0/6 = 6
+0:0/6/modulate = Color(0, 0, 1, 1)
+0:0/7 = 7
+0:0/7/modulate = Color(1, 0.8249593, 0, 1)
+
+[sub_resource type="TileSet" id="TileSet_uwrxv"]
+tile_size = Vector2i(32, 32)
+sources/1 = SubResource("TileSetAtlasSource_lbhrr")
+
+[node name="GameWorld" type="Node2D" unique_id=1751805160]
+
+[node name="GridBackground" type="Node2D" parent="." unique_id=853603985]
+script = ExtResource("1_47u71")
+
+[node name="BoardLayer" type="TileMapLayer" parent="." unique_id=185866306]
+tile_set = SubResource("TileSet_uwrxv")
+
+[node name="ActivePiece" type="Node2D" parent="." unique_id=1033981946]
+
+[node name="GravityTimer" type="Timer" parent="." unique_id=348463019]
+wait_time = 0.5
+
+[node name="Floor" type="ColorRect" parent="." unique_id=2061820082]
+offset_top = 608.0
+offset_right = 320.0
+offset_bottom = 640.0
+color = Color(1, 0.023529412, 0.023529412, 1)
