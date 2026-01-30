@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://0uow7lx0oaje"]
 
 [ext_resource type="Script" uid="uid://bl51upkypl0xh" path="res://scenes/grid_background.gd" id="1_47u71"]
-[ext_resource type="Texture2D" uid="uid://bxm4dhkhxdpvq" path="res://assets/block_bevel.tres" id="2_47u71"]
+[ext_resource type="Texture2D" uid="uid://cvjt2i03e0o2k" path="res://assets/base_tile.png" id="2_47u71"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ywgp6"]
 texture = ExtResource("2_47u71")
@@ -18,7 +18,7 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSet" id="TileSet_uwrxv"]
 tile_size = Vector2i(32, 32)
-sources/0 = SubResource("TileSetAtlasSource_ywgp6")
+sources/1 = SubResource("TileSetAtlasSource_ywgp6")
 
 [node name="GameWorld" type="Node2D" unique_id=1751805160]
 
