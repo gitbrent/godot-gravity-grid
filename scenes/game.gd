@@ -1,9 +1,11 @@
 extends Node2D
 
+const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const CELL_SIZE = 32
 const GRID_WIDTH = 10 * CELL_SIZE
 const FLOOR_Y = 19 * CELL_SIZE
 var current_shape_key: String = ""
+var next_shape_key: String = ""
 
 # --- DATA ---
 const TETROMINOES = {
@@ -28,24 +30,16 @@ const TILE_IDS = {
 @onready var start_button: Button = $UI/MainMenu/CenterContainer/VBoxContainer/StartButton
 @onready var game_world: Node2D = $GameWorld
 @onready var game_placeholder: Control = $UI/HUD/HBoxContainer/GamePlaceholder
+@onready var next_piece_preview: Control = $UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
 	timer.timeout.connect(_on_gravity_tick)
+	randomize()
+	next_shape_key = TETROMINOES.keys().pick_random()
 	
-	# Connect to window resize so the board stays centered if you resize
-	get_tree().root.size_changed.connect(_align_board)
-	
-	# WAIT for the UI layout to finish calculating!
-	call_deferred("_align_board")
-
-func _align_board() -> void:
-	# Get the global position of the placeholder in the UI
-	var target_pos = game_placeholder.get_global_rect().position
-	
-	# Apply it to our GameWorld
-	# We might need a slight offset if your placeholder has margins
-	game_world.global_position = target_pos
+	# Initial Update of UI
+	update_next_piece_ui()
 
 func _on_start_pressed() -> void:
 	start_button.hide()
@@ -53,32 +47,54 @@ func _on_start_pressed() -> void:
 	spawn_piece()
 
 func spawn_piece() -> void:
+	# 1. Clean up old piece
 	for child in piece.get_children():
 		child.queue_free()
 	
-	var keys = TETROMINOES.keys()
-
-	# 1. Pick a random shape
-	current_shape_key = keys.pick_random()
+	# 2. Promote "Next" to "Current"
+	current_shape_key = next_shape_key
+	
+	# 3. Pick a NEW "Next"
+	next_shape_key = TETROMINOES.keys().pick_random()
+	
+	# 4. Update the UI to show the NEW next piece
+	update_next_piece_ui()
+	
+	# 5. Center piece
+	piece.position = Vector2(4 * CELL_SIZE, 0)
+	
 	var shape_data = TETROMINOES[current_shape_key]
 	var shape_color = COLORS[current_shape_key]
 	
-	# 2. Clear old blocks from the container
-	for child in piece.get_children():
-		child.queue_free()
-	
-	# 3. Create the 4 blocks
+	# Create the 4 blocks
 	for grid_pos in shape_data:
-		var block = ColorRect.new()
-		block.size = Vector2(CELL_SIZE, CELL_SIZE)
-		block.color = shape_color
-		# Important: Position the block relative to the container
-		block.position = Vector2(grid_pos.x * CELL_SIZE, grid_pos.y * CELL_SIZE)
+		# CHANGE: Use Sprite2D instead of ColorRect
+		var block = Sprite2D.new()
+		block.texture = BLOCK_TEXTURE
+		
+		# COLOR: Modulate tints the white texture
+		block.modulate = shape_color 
+		
+		block.position = Vector2(grid_pos.x * CELL_SIZE + (CELL_SIZE/2.0), grid_pos.y * CELL_SIZE + (CELL_SIZE/2.0))
+		# Note: Sprites are centered by default! 
+		# We added +CELL_SIZE/2 to position because ColorRect was Top-Left based.
+		
 		piece.add_child(block)
-	
-	# 4. Position the container at the top center
-	piece.position = Vector2(4 * CELL_SIZE, 0)
-	timer.start()
+		
+	# GAME OVER CHECK
+	# Pass Vector2.ZERO to check "Can I exist where I just spawned?"
+	# If move_piece returns FALSE (it failed), that means we spawned inside a block.
+	if not move_piece(Vector2.ZERO):
+		print("Game Over!")
+		timer.stop()
+		# TODO: Show 'Game Over' UI here later
+	else:
+		timer.start()
+
+func update_next_piece_ui() -> void:
+	var data = TETROMINOES[next_shape_key]
+	var color = COLORS[next_shape_key]
+	next_piece_preview.update_preview(data, color, next_shape_key)
 
 func rotate_piece() -> void:
 	# 1. The "O" piece (Square) never rotates
@@ -128,33 +144,39 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_gravity_tick() -> void:
 	move_piece(Vector2.DOWN)
 
-func move_piece(dir: Vector2) -> void:
+func move_piece(dir: Vector2) -> bool:
 	var target_pos = piece.position + (dir * CELL_SIZE)
 	
 	for block in piece.get_children():
 		var block_global_pos = target_pos + block.position
+		#var block_relative_pos = target_pos + block.position
 		
-		# 1. Wall Checks (Same as before)
+		# 1. Wall Checks
 		if block_global_pos.x < 0 or block_global_pos.x >= GRID_WIDTH:
-			return 
+			#print("Fail: Hit Wall at X=", block_relative_pos.x)
+			return false # Hit wall -> Move Failed
 		
-		# 2. Floor Check (Same as before)
+		# 2. Floor Check
 		if block_global_pos.y >= FLOOR_Y:
 			if dir == Vector2.DOWN:
 				lock_piece()
-			return 
+			#print("Fail: Hit Floor at Y=", block_relative_pos.y)
+			return false # Hit floor -> Move Failed
 			
-		# 3. BOARD COLLISION (New!)
+		# 3. BOARD COLLISION
 		# Convert pixel position to grid coordinates (Vector2i)
 		var grid_pos = board_layer.local_to_map(block_global_pos)
-		
-		# check if a tile exists at this coordinate (source_id != -1)
-		if board_layer.get_cell_source_id(grid_pos) != -1:
+		# Check if a tile exists at this coordinate (source_id != -1)
+		var tile_id = board_layer.get_cell_source_id(grid_pos)
+		if tile_id != -1:
+			#print("Fail: Hit Board Tile at ", grid_pos, " ID: ", tile_id)
 			if dir == Vector2.DOWN:
 				lock_piece()
-			return # Hit a generic block
+			return false # Hit another block -> Move Failed
 			
+	# LAST: If we made it here, the move is valid!
 	piece.position = target_pos
+	return true # Move Succeeded
 
 func lock_piece() -> void:
 	var tile_id = TILE_IDS[current_shape_key]

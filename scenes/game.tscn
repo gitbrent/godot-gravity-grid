@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dtxit1j5c8fdb" path="res://scenes/game.gd" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://0uow7lx0oaje" path="res://scenes/game_world.tscn" id="2_yqjtg"]
+[ext_resource type="Script" uid="uid://cyg04cc2gi30i" path="res://scenes/next_piece_preview.gd" id="3_lnu2h"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqjtg"]
 bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
@@ -63,6 +64,28 @@ size_flags_horizontal = 4
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_lnu2h")
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1414023374]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NextPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/RightStats/CenterContainer" unique_id=452286977]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+script = ExtResource("3_lnu2h")
+
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview" unique_id=1907555742]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="MainMenu" type="Control" parent="UI" unique_id=1196798541]
 layout_mode = 3
