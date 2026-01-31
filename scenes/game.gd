@@ -1,4 +1,21 @@
 extends Node2D
+
+# --- ONREADY VARS ---
+@onready var board_layer: TileMapLayer = $GameWorld/BoardLayer
+@onready var piece: Node2D = $GameWorld/ActivePiece
+@onready var timer: Timer = $GameWorld/GravityTimer
+@onready var main_menu: Control = $UI/MainMenu
+@onready var start_button: Button = $UI/MainMenu/CenterContainer/VBoxContainer/StartButton
+@onready var game_world: Node2D = $GameWorld
+@onready var game_placeholder: Control = $UI/HUD/HBoxContainer/GamePlaceholder
+@onready var next_piece_preview: Control = $UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview
+@onready var hold_piece_preview: Control = $UI/HUD/HBoxContainer/LeftStats/VBoxContainer/CenterContainer/HoldPiecePreview
+@onready var score_label: Label = $UI/HUD/HBoxContainer/LeftStats/VBoxContainer/ScoreLabel
+@onready var level_label: Label = $UI/HUD/HBoxContainer/LeftStats/VBoxContainer/LevelLabel
+@onready var lines_label: Label = $UI/HUD/HBoxContainer/LeftStats/VBoxContainer/LinesLabel
+@onready var game_over_menu: Control = $UI/GameOverMenu
+@onready var final_score_label: Label = $UI/GameOverMenu/CenterContainer/VBoxContainer/FinalScoreLabel
+@onready var restart_button: Button = $UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton
 # --- CONST VARS ---
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const CELL_SIZE = 32
@@ -25,28 +42,34 @@ var current_shape_key: String = ""
 var next_shape_key: String = ""
 var hold_shape_key: String = ""
 var can_hold: bool = true
-# --- ONREADY VARS ---
-@onready var piece: Node2D = $GameWorld/ActivePiece
-@onready var board_layer: TileMapLayer = $GameWorld/BoardLayer
-@onready var timer: Timer = $GameWorld/GravityTimer
-@onready var start_button: Button = $UI/MainMenu/CenterContainer/VBoxContainer/StartButton
-@onready var game_world: Node2D = $GameWorld
-@onready var game_placeholder: Control = $UI/HUD/HBoxContainer/GamePlaceholder
-@onready var next_piece_preview: Control = $UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview
-@onready var hold_piece_preview: Control = $UI/HUD/HBoxContainer/LeftStats/CenterContainer/HoldPiecePreview
+# --- GAME STATE ---
+var score: int = 0
+var current_level: int = 1
+var lines_cleared_total: int = 0
 
 func _ready() -> void:
+	main_menu.show()
 	start_button.pressed.connect(_on_start_pressed)
+	restart_button.pressed.connect(_on_restart_pressed)
 	timer.timeout.connect(_on_gravity_tick)
 	randomize()
 	next_shape_key = TETROMINOES.keys().pick_random()
 	
 	# Initial Update of UI
+	game_over_menu.hide()
 	update_next_piece_ui()
 
 func _on_start_pressed() -> void:
+	# 1.
 	start_button.hide()
 	board_layer.clear()
+	# 2. Reset State
+	score = 0
+	current_level = 1
+	lines_cleared_total = 0
+	timer.wait_time = 0.5 # Reset speed
+	update_ui()
+	# 3.  
 	spawn_piece_from_next()
 
 func spawn_piece_from_next() -> void:
@@ -82,8 +105,7 @@ func spawn_current_shape() -> void:
 		
 	# 5. Game Over Check
 	if not move_piece(Vector2.ZERO):
-		print("Game Over!")
-		timer.stop()
+		game_over()
 	else:
 		timer.start()
 
@@ -226,16 +248,21 @@ func lock_piece() -> void:
 	spawn_piece_from_next()
 
 func check_lines() -> void:
-	# Loop from bottom (row 19) up to top (row 0)
+	var lines_cleared_this_turn = 0
+	
 	var row = 19
 	while row >= 0:
 		if is_row_full(row):
 			delete_row(row)
-			# shift_rows_down(row) is implicit because we stay on this 'row' index
-			# and check it again (since the row above just dropped into it)
 			shift_rows_down(row)
+			lines_cleared_this_turn += 1
+			# Note: We stay on 'row' index to check the new line that dropped in
 		else:
 			row -= 1
+			
+	# If we cleared anything, award points!
+	if lines_cleared_this_turn > 0:
+		add_score(lines_cleared_this_turn)
 
 func is_row_full(y: int) -> bool:
 	for x in range(10): # Columns 0 to 9
@@ -261,3 +288,53 @@ func shift_rows_down(empty_row_y: int) -> void:
 			
 			# Clear the row above (it has moved down)
 			board_layer.set_cell(Vector2i(x, y - 1), -1)
+
+func add_score(lines_count: int) -> void:
+	# Standard Arcade Scoring Rules
+	var base_points = 0
+	match lines_count:
+		1: base_points = 100
+		2: base_points = 300
+		3: base_points = 500
+		4: base_points = 800
+	
+	# Score scales with Level
+	score += base_points * current_level
+	
+	# Update Stats
+	lines_cleared_total += lines_count
+	check_level_up()
+	update_ui()
+
+func check_level_up() -> void:
+	# Level up every 10 lines
+	@warning_ignore("integer_division")
+	var new_level = 1 + (lines_cleared_total / 10)
+	
+	if new_level > current_level:
+		current_level = new_level
+		increase_speed()
+		print("Level Up! Welcome to Level ", current_level)
+
+func increase_speed() -> void:
+	# Decrease timer wait time (make it faster)
+	# Curve: Starts at 0.5s, decreases by 0.05s per level, caps at 0.05s
+	var new_wait_time = max(0.05, 0.5 - ((current_level - 1) * 0.05))
+	timer.wait_time = new_wait_time
+
+func update_ui() -> void:
+	score_label.text = str(score)
+	level_label.text = str(current_level)
+	lines_label.text = str(lines_cleared_total)
+
+func game_over() -> void:
+	print("Game Over!")
+	timer.stop()
+	
+	# Show the menu
+	final_score_label.text = "Final Score: " + str(score)
+	game_over_menu.show()
+
+func _on_restart_pressed() -> void:
+	game_over_menu.hide()
+	_on_start_pressed() # Reuse your existing start logic!

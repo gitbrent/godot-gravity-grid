@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://dtxit1j5c8fdb" path="res://scenes/game.gd" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://0uow7lx0oaje" path="res://scenes/game_world.tscn" id="2_yqjtg"]
 [ext_resource type="Script" uid="uid://cyg04cc2gi30i" path="res://scenes/next_piece_preview.gd" id="3_lnu2h"]
+[ext_resource type="FontFile" uid="uid://cr4326f73dk4p" path="res://assets/fonts/Kenney Pixel.ttf" id="4_lbhrr"]
+[ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
+[ext_resource type="Texture2D" uid="uid://bhfiy4eisd3y2" path="res://assets/blue_button00.png" id="6_p57ef"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqjtg"]
 bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
@@ -15,21 +18,6 @@ script = ExtResource("1_uwrxv")
 
 [node name="GameWorld" parent="." unique_id=1751805160 instance=ExtResource("2_yqjtg")]
 position = Vector2(160, 0)
-
-[node name="Background" type="ColorRect" parent="." unique_id=1686890138]
-visible = false
-offset_right = 320.0
-offset_bottom = 640.0
-color = Color(0.13333334, 0.13333334, 0.13333334, 1)
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=129589427]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.13725491, 0.13725491, 0.13725491, 1)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=73125386]
 
@@ -55,7 +43,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
 
-[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=783918232]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=1207315426]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -63,12 +51,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HoldPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/CenterContainer" unique_id=845994456]
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=783918232]
+layout_mode = 2
+
+[node name="HoldPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer/CenterContainer" unique_id=845994456]
 custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 script = ExtResource("3_lnu2h")
 
-[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/LeftStats/CenterContainer/HoldPiecePreview" unique_id=2008834259]
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer/CenterContainer/HoldPiecePreview" unique_id=2008834259]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,6 +67,36 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
+
+[node name="Label1" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1351360283]
+layout_mode = 2
+text = "SCORE"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=537091765]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1441816458]
+layout_mode = 2
+text = "LEVEL"
+horizontal_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=196952403]
+layout_mode = 2
+text = "1"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=49622651]
+layout_mode = 2
+text = "LINES"
+horizontal_alignment = 1
+
+[node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=47901951]
+layout_mode = 2
+text = "1"
+horizontal_alignment = 1
 
 [node name="GamePlaceholder" type="Control" parent="UI/HUD/HBoxContainer" unique_id=793255553]
 custom_minimum_size = Vector2(320, 640)
@@ -110,6 +131,7 @@ grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="MainMenu" type="Control" parent="UI" unique_id=1196798541]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -133,3 +155,62 @@ layout_mode = 2
 size_flags_vertical = 4
 text = "START GAME"
 metadata/_edit_use_anchors_ = true
+
+[node name="GameOverMenu" type="Control" parent="UI" unique_id=2018667270]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="UI/GameOverMenu" unique_id=68572218]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/GameOverMenu" unique_id=1681180938]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverMenu/CenterContainer" unique_id=1628124176]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="LabelGameOver" type="Label" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=2044006831]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(18.892157, 18.892157, 18.892157, 0.5)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 84
+text = "GAME OVER"
+
+[node name="FinalScoreLabel" type="Label" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=1870159868]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_iywne")
+text = "Final Score: 0"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="TextureButton" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=1361706753]
+layout_mode = 2
+texture_normal = ExtResource("6_p57ef")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton" unique_id=1054393127]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "TRY AGAIN"
+horizontal_alignment = 1
+vertical_alignment = 1
