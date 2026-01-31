@@ -1,13 +1,10 @@
 extends Node2D
-
+# --- CONST VARS ---
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const CELL_SIZE = 32
 const GRID_WIDTH = 10 * CELL_SIZE
 const FLOOR_Y = 19 * CELL_SIZE
-var current_shape_key: String = ""
-var next_shape_key: String = ""
-
-# --- DATA ---
+# --- DATA [ENUMS] ---
 const TETROMINOES = {
 	"I": [Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)],
 	"O": [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
@@ -23,7 +20,12 @@ const COLORS = {
 const TILE_IDS = {
 	"I": 1, "O": 2, "T": 3, "S": 4, "Z": 5, "J": 6, "L": 7
 }
-
+# --- VARS ---
+var current_shape_key: String = ""
+var next_shape_key: String = ""
+var hold_shape_key: String = ""
+var can_hold: bool = true
+# --- ONREADY VARS ---
 @onready var piece: Node2D = $GameWorld/ActivePiece
 @onready var board_layer: TileMapLayer = $GameWorld/BoardLayer
 @onready var timer: Timer = $GameWorld/GravityTimer
@@ -31,6 +33,7 @@ const TILE_IDS = {
 @onready var game_world: Node2D = $GameWorld
 @onready var game_placeholder: Control = $UI/HUD/HBoxContainer/GamePlaceholder
 @onready var next_piece_preview: Control = $UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview
+@onready var hold_piece_preview: Control = $UI/HUD/HBoxContainer/LeftStats/CenterContainer/HoldPiecePreview
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
@@ -44,50 +47,43 @@ func _ready() -> void:
 func _on_start_pressed() -> void:
 	start_button.hide()
 	board_layer.clear()
-	spawn_piece()
+	spawn_piece_from_next()
 
-func spawn_piece() -> void:
-	# 1. Clean up old piece
+func spawn_piece_from_next() -> void:
+	# promote Next to Current
+	current_shape_key = next_shape_key
+	next_shape_key = TETROMINOES.keys().pick_random()
+	update_next_piece_ui()
+	
+	spawn_current_shape()
+
+func spawn_current_shape() -> void:
+	# 1. CLEANUP: Remove any existing blocks from the container!
+	# (This is the missing magic part)
 	for child in piece.get_children():
 		child.queue_free()
 	
-	# 2. Promote "Next" to "Current"
-	current_shape_key = next_shape_key
+	# 2. Allow holding again for the new turn
+	can_hold = true
 	
-	# 3. Pick a NEW "Next"
-	next_shape_key = TETROMINOES.keys().pick_random()
-	
-	# 4. Update the UI to show the NEW next piece
-	update_next_piece_ui()
-	
-	# 5. Center piece
+	# 3. Reset position to start
 	piece.position = Vector2(4 * CELL_SIZE, 0)
 	
+	# 4. Create blocks
 	var shape_data = TETROMINOES[current_shape_key]
 	var shape_color = COLORS[current_shape_key]
 	
-	# Create the 4 blocks
 	for grid_pos in shape_data:
-		# CHANGE: Use Sprite2D instead of ColorRect
 		var block = Sprite2D.new()
 		block.texture = BLOCK_TEXTURE
-		
-		# COLOR: Modulate tints the white texture
-		block.modulate = shape_color 
-		
+		block.modulate = shape_color
 		block.position = Vector2(grid_pos.x * CELL_SIZE + (CELL_SIZE/2.0), grid_pos.y * CELL_SIZE + (CELL_SIZE/2.0))
-		# Note: Sprites are centered by default! 
-		# We added +CELL_SIZE/2 to position because ColorRect was Top-Left based.
-		
 		piece.add_child(block)
 		
-	# GAME OVER CHECK
-	# Pass Vector2.ZERO to check "Can I exist where I just spawned?"
-	# If move_piece returns FALSE (it failed), that means we spawned inside a block.
+	# 5. Game Over Check
 	if not move_piece(Vector2.ZERO):
 		print("Game Over!")
 		timer.stop()
-		# TODO: Show 'Game Over' UI here later
 	else:
 		timer.start()
 
@@ -95,6 +91,36 @@ func update_next_piece_ui() -> void:
 	var data = TETROMINOES[next_shape_key]
 	var color = COLORS[next_shape_key]
 	next_piece_preview.update_preview(data, color, next_shape_key)
+
+func hold_piece() -> void:
+	if not can_hold:
+		return
+		
+	# 1. Clear current piece from board (visually)
+	for child in piece.get_children():
+		child.queue_free()
+		
+	# 2. The Swap Logic
+	if hold_shape_key == "":
+		# Case A: First hold (Hold is empty)
+		hold_shape_key = current_shape_key
+		spawn_piece_from_next()
+	else:
+		# Case B: Swap (Hold has a piece)
+		var temp = current_shape_key
+		current_shape_key = hold_shape_key
+		hold_shape_key = temp
+		
+		# Respawn the 'new' current piece (which was the held one)
+		spawn_current_shape() 
+		
+	# 3. Lock hold until next turn
+	can_hold = false
+	
+	# 4. Update UI
+	var data = TETROMINOES[hold_shape_key]
+	var color = COLORS[hold_shape_key]
+	hold_piece_preview.update_preview(data, color, hold_shape_key)
 
 func rotate_piece() -> void:
 	# 1. The "O" piece (Square) never rotates
@@ -140,6 +166,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_right"): move_piece(Vector2.RIGHT)
 	elif event.is_action_pressed("ui_down"): move_piece(Vector2.DOWN)
 	elif event.is_action_pressed("ui_up"): rotate_piece()
+	elif event.is_action_pressed("hold_piece"): hold_piece()
 
 func _on_gravity_tick() -> void:
 	move_piece(Vector2.DOWN)
@@ -196,7 +223,7 @@ func lock_piece() -> void:
 	check_lines() 
 	
 	# 3. Spawn the next piece
-	spawn_piece()
+	spawn_piece_from_next()
 
 func check_lines() -> void:
 	# Loop from bottom (row 19) up to top (row 0)

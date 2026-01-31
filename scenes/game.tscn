@@ -55,6 +55,28 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
 
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=783918232]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HoldPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/CenterContainer" unique_id=845994456]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+script = ExtResource("3_lnu2h")
+
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/LeftStats/CenterContainer/HoldPiecePreview" unique_id=2008834259]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
+
 [node name="GamePlaceholder" type="Control" parent="UI/HUD/HBoxContainer" unique_id=793255553]
 custom_minimum_size = Vector2(320, 640)
 layout_mode = 2
