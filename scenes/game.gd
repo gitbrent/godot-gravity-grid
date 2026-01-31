@@ -5,7 +5,7 @@ extends Node2D
 @onready var piece: Node2D = $GameWorld/ActivePiece
 @onready var timer: Timer = $GameWorld/GravityTimer
 @onready var main_menu: Control = $UI/MainMenu
-@onready var start_button: Button = $UI/MainMenu/CenterContainer/VBoxContainer/StartButton
+@onready var start_button: TextureButton = $UI/MainMenu/CenterContainer/VBoxContainer/StartButton
 @onready var game_world: Node2D = $GameWorld
 @onready var game_placeholder: Control = $UI/HUD/HBoxContainer/GamePlaceholder
 @onready var next_piece_preview: Control = $UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview
@@ -15,7 +15,7 @@ extends Node2D
 @onready var lines_label: Label = $UI/HUD/HBoxContainer/LeftStats/VBoxContainer/LinesLabel
 @onready var game_over_menu: Control = $UI/GameOverMenu
 @onready var final_score_label: Label = $UI/GameOverMenu/CenterContainer/VBoxContainer/FinalScoreLabel
-@onready var restart_button: Button = $UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton
+@onready var restart_button: TextureButton = $UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton
 # --- CONST VARS ---
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const CELL_SIZE = 32

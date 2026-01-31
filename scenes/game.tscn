@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://0uow7lx0oaje" path="res://scenes/game_world.tscn" id="2_yqjtg"]
 [ext_resource type="Script" uid="uid://cyg04cc2gi30i" path="res://scenes/next_piece_preview.gd" id="3_lnu2h"]
 [ext_resource type="FontFile" uid="uid://cr4326f73dk4p" path="res://assets/fonts/Kenney Pixel.ttf" id="4_lbhrr"]
+[ext_resource type="Texture2D" uid="uid://dxdwygbbv2lnn" path="res://assets/blue_button03.png" id="4_u5sy4"]
 [ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
 [ext_resource type="Texture2D" uid="uid://bhfiy4eisd3y2" path="res://assets/blue_button00.png" id="6_p57ef"]
 
@@ -70,31 +71,46 @@ color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="Label1" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1351360283]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
 text = "SCORE"
 horizontal_alignment = 1
 
 [node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=537091765]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.81352156, 0.38857287, 0.97269243, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 84
 text = "0"
 horizontal_alignment = 1
 
 [node name="Label2" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1441816458]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
 text = "LEVEL"
 horizontal_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=196952403]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 64
 text = "1"
 horizontal_alignment = 1
 
 [node name="Label3" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=49622651]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
 text = "LINES"
 horizontal_alignment = 1
 
 [node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=47901951]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8249593, 0, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 64
 text = "1"
 horizontal_alignment = 1
 
@@ -131,7 +147,6 @@ grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="MainMenu" type="Control" parent="UI" unique_id=1196798541]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -150,13 +165,25 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/MainMenu/CenterContainer" unique_id=51651952]
 layout_mode = 2
 
-[node name="StartButton" type="Button" parent="UI/MainMenu/CenterContainer/VBoxContainer" unique_id=1547140860]
+[node name="StartButton" type="TextureButton" parent="UI/MainMenu/CenterContainer/VBoxContainer" unique_id=1910380678]
 layout_mode = 2
 size_flags_vertical = 4
-text = "START GAME"
+texture_normal = ExtResource("4_u5sy4")
 metadata/_edit_use_anchors_ = true
 
+[node name="Label" type="Label" parent="UI/MainMenu/CenterContainer/VBoxContainer/StartButton" unique_id=505381927]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "START GAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="GameOverMenu" type="Control" parent="UI" unique_id=2018667270]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
