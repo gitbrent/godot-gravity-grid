@@ -7,6 +7,13 @@
 [ext_resource type="Texture2D" uid="uid://dxdwygbbv2lnn" path="res://assets/blue_button03.png" id="4_u5sy4"]
 [ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
 [ext_resource type="Texture2D" uid="uid://bhfiy4eisd3y2" path="res://assets/blue_button00.png" id="6_p57ef"]
+[ext_resource type="AudioStream" uid="uid://cgecfq6nys7e2" path="res://assets/audio/piece_move.ogg" id="8_kvuet"]
+[ext_resource type="Script" uid="uid://bfvt03shpuds2" path="res://scenes/sound_manager.gd" id="8_trtic"]
+[ext_resource type="AudioStream" uid="uid://cr1vvfvdu8w7d" path="res://assets/audio/piece_rotate.ogg" id="9_trtic"]
+[ext_resource type="AudioStream" uid="uid://pvneiepwtoln" path="res://assets/audio/piece_lock.ogg" id="10_ir15t"]
+[ext_resource type="AudioStream" uid="uid://sx18e82f8581" path="res://assets/audio/line_cleared.ogg" id="11_ca42v"]
+[ext_resource type="AudioStream" uid="uid://ds1sc41d5rmag" path="res://assets/audio/game_over.ogg" id="12_rysoc"]
+[ext_resource type="AudioStream" uid="uid://seeuj02ndtl7" path="res://assets/audio/game_start.ogg" id="13_ssvqc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqjtg"]
 bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
@@ -70,26 +77,30 @@ grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="Label1" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1351360283]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
 text = "SCORE"
 horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=537091765]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.81352156, 0.38857287, 0.97269243, 1)
 theme_override_fonts/font = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 84
+theme_override_font_sizes/font_size = 64
 text = "0"
 horizontal_alignment = 1
 
 [node name="Label2" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1441816458]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
 text = "LEVEL"
 horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=196952403]
 layout_mode = 2
@@ -100,18 +111,20 @@ text = "1"
 horizontal_alignment = 1
 
 [node name="Label3" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=49622651]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
 text = "LINES"
 horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=47901951]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8249593, 0, 1)
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 64
-text = "1"
+text = "0"
 horizontal_alignment = 1
 
 [node name="GamePlaceholder" type="Control" parent="UI/HUD/HBoxContainer" unique_id=793255553]
@@ -241,3 +254,24 @@ grow_vertical = 2
 text = "TRY AGAIN"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SoundManager" type="Node" parent="." unique_id=12747307]
+script = ExtResource("8_trtic")
+
+[node name="SfxMove" type="AudioStreamPlayer" parent="SoundManager" unique_id=1034941949]
+stream = ExtResource("8_kvuet")
+
+[node name="SfxRotate" type="AudioStreamPlayer" parent="SoundManager" unique_id=1156602632]
+stream = ExtResource("9_trtic")
+
+[node name="SfxLock" type="AudioStreamPlayer" parent="SoundManager" unique_id=1816311434]
+stream = ExtResource("10_ir15t")
+
+[node name="SfxClear" type="AudioStreamPlayer" parent="SoundManager" unique_id=1240403006]
+stream = ExtResource("11_ca42v")
+
+[node name="SfxGameOver" type="AudioStreamPlayer" parent="SoundManager" unique_id=1455443468]
+stream = ExtResource("12_rysoc")
+
+[node name="SfxGameStart" type="AudioStreamPlayer" parent="SoundManager" unique_id=588289406]
+stream = ExtResource("13_ssvqc")

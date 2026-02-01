@@ -16,6 +16,7 @@ extends Node2D
 @onready var game_over_menu: Control = $UI/GameOverMenu
 @onready var final_score_label: Label = $UI/GameOverMenu/CenterContainer/VBoxContainer/FinalScoreLabel
 @onready var restart_button: TextureButton = $UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton
+@onready var sound_manager: Node = $SoundManager
 # --- CONST VARS ---
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const CELL_SIZE = 32
@@ -180,6 +181,9 @@ func rotate_piece() -> void:
 	for block in piece.get_children():
 		block.position = new_positions[i]
 		i += 1
+	
+	# 5. SFX
+	sound_manager.play_rotate()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if timer.is_stopped(): return
@@ -224,7 +228,10 @@ func move_piece(dir: Vector2) -> bool:
 			return false # Hit another block -> Move Failed
 			
 	# LAST: If we made it here, the move is valid!
+	# If move is valid (at the very end of the function)
 	piece.position = target_pos
+	if dir != Vector2.DOWN:
+		sound_manager.play_move()
 	return true # Move Succeeded
 
 func lock_piece() -> void:
@@ -233,18 +240,20 @@ func lock_piece() -> void:
 	# 1. Get the correct Source ID dynamically
 	# (This grabs the ID of the first source in the list)
 	var source_id = board_layer.tile_set.get_source_id(0)
-
 	for block in piece.get_children():
 		var global_pos = piece.position + block.position
 		var grid_pos = board_layer.local_to_map(global_pos)
 		
 		# Set cell using source_id 0, coord (0,0), and the alternative_tile ID
 		board_layer.set_cell(grid_pos, source_id, Vector2i(0, 0), tile_id)
-		
-	# 2. Check for Lines
+	
+	# 2.
+	sound_manager.play_lock()
+	
+	# 3. Check for Lines
 	check_lines() 
 	
-	# 3. Spawn the next piece
+	# 4. Spawn the next piece
 	spawn_piece_from_next()
 
 func check_lines() -> void:
@@ -263,6 +272,7 @@ func check_lines() -> void:
 	# If we cleared anything, award points!
 	if lines_cleared_this_turn > 0:
 		add_score(lines_cleared_this_turn)
+		sound_manager.play_clear()
 
 func is_row_full(y: int) -> bool:
 	for x in range(10): # Columns 0 to 9
@@ -330,6 +340,8 @@ func update_ui() -> void:
 func game_over() -> void:
 	print("Game Over!")
 	timer.stop()
+	
+	sound_manager.play_game_over()
 	
 	# Show the menu
 	final_score_label.text = "Final Score: " + str(score)
