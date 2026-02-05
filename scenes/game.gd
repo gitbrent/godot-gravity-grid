@@ -50,6 +50,13 @@ var can_hold: bool = true
 var score: int = 0
 var current_level: int = 1
 var lines_cleared_total: int = 0
+# --- DAS ---
+# DAS SETTINGS
+const DAS_DELAY = 0.2     # Time before auto-repeat starts
+const DAS_SPEED = 0.05    # Time between auto-repeat moves
+# DAS STATE
+var das_timer: float = 0.0
+var current_das_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	main_menu.show()
@@ -75,6 +82,21 @@ func _on_start_pressed() -> void:
 	update_ui()
 	# 3.  
 	spawn_piece_from_next()
+
+func _process(delta: float) -> void:
+	if timer.is_stopped() or current_das_direction == Vector2.ZERO:
+		return
+
+	# Accumulate time
+	das_timer += delta
+	
+	# If we have held longer than the initial delay...
+	if das_timer > DAS_DELAY:
+		# Keep moving as long as we have "credit" in the timer
+		while das_timer > DAS_DELAY + DAS_SPEED:
+			das_timer -= DAS_SPEED # Pay the cost
+			if move_piece(current_das_direction):
+				sound_manager.play_move()
 
 func spawn_piece_from_next() -> void:
 	# promote Next to Current
@@ -191,14 +213,38 @@ func rotate_piece() -> void:
 	sound_manager.play_rotate()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if timer.is_stopped(): return
+	if timer.is_stopped(): return # Don't move if game over
 	
-	if event.is_action_pressed("ui_left"): move_piece(Vector2.LEFT)
-	elif event.is_action_pressed("ui_right"): move_piece(Vector2.RIGHT)
-	elif event.is_action_pressed("ui_down"): move_piece(Vector2.DOWN)
-	elif event.is_action_pressed("ui_up"): rotate_piece()
-	elif event.is_action_pressed("hold_piece"): hold_piece()
-	elif event.is_action_pressed("ui_accept"): hard_drop()
+	# 1. MOVEMENT (Left/Right)
+	if event.is_action_pressed("ui_left"):
+		current_das_direction = Vector2.LEFT
+		das_timer = 0.0
+		move_piece(Vector2.LEFT) # Instant move 1
+		sound_manager.play_move()
+		
+	elif event.is_action_pressed("ui_right"):
+		current_das_direction = Vector2.RIGHT
+		das_timer = 0.0
+		move_piece(Vector2.RIGHT) # Instant move 1
+		sound_manager.play_move()
+		
+	elif event.is_action_released("ui_left") and current_das_direction == Vector2.LEFT:
+		current_das_direction = Vector2.ZERO
+		
+	elif event.is_action_released("ui_right") and current_das_direction == Vector2.RIGHT:
+		current_das_direction = Vector2.ZERO
+
+	# 2. OTHER ACTIONS (Hard Drop, Rotate, Hold)
+	elif event.is_action_pressed("ui_up"): 
+		rotate_piece()
+	elif event.is_action_pressed("hold_piece"): 
+		hold_piece()
+	elif event.is_action_pressed("ui_accept"): 
+		hard_drop()
+	elif event.is_action_pressed("ui_down"):
+		# Soft Drop (Manual push down)
+		move_piece(Vector2.DOWN)
+		add_points(1) # Classic rule: 1 point per soft drop cell!
 
 func _on_gravity_tick() -> void:
 	move_piece(Vector2.DOWN)
@@ -249,7 +295,8 @@ func hard_drop() -> void:
 	
 	# 2. Apply Move
 	piece.position += drop_offset
-	add_score(2 * (drop_offset.y / CELL_SIZE)) # Bonus points for hard dropping!
+	var cells_dropped = drop_offset.y / CELL_SIZE
+	add_points(cells_dropped * 2)
 	
 	# 3. Lock instantly
 	lock_piece()
@@ -294,7 +341,7 @@ func check_lines() -> void:
 			
 	# If we cleared anything, award points!
 	if lines_cleared_this_turn > 0:
-		add_score(lines_cleared_this_turn)
+		process_line_clears(lines_cleared_this_turn)
 		sound_manager.play_clear()
 
 func is_row_full(y: int) -> bool:
@@ -372,22 +419,25 @@ func update_ghost() -> void:
 	# 4. Place Ghost
 	ghost_piece.position = piece.position + drop_offset
 
-func add_score(lines_count: int) -> void:
-	# Standard Arcade Scoring Rules
+func add_points(amount: int) -> void:
+	score += amount
+	update_ui()
+
+func process_line_clears(lines_count: int) -> void:
+	# 1. Update Totals
+	lines_cleared_total += lines_count
+	check_level_up()
+	
+	# 2. Calculate Score based on Tetris rules
 	var base_points = 0
 	match lines_count:
 		1: base_points = 100
 		2: base_points = 300
 		3: base_points = 500
 		4: base_points = 800
-	
-	# Score scales with Level
-	score += base_points * current_level
-	
-	# Update Stats
-	lines_cleared_total += lines_count
-	check_level_up()
-	update_ui()
+		
+	# 3. Add the points
+	add_points(base_points * current_level)
 
 func check_level_up() -> void:
 	# Level up every 10 lines
