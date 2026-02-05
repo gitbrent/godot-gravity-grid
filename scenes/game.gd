@@ -85,10 +85,10 @@ func spawn_piece_from_next() -> void:
 	spawn_current_shape()
 
 func spawn_current_shape() -> void:
-	# 1. CLEANUP: Remove any existing blocks from the container!
-	# (This is the missing magic part)
+	# 1. CLEANUP: Instantly detach old blocks so the Ghost doesn't see them
 	for child in piece.get_children():
-		child.queue_free()
+		piece.remove_child(child) # Removes from tree instantly
+		child.queue_free()        # Kills it from memory later
 	
 	# 2. Allow holding again for the new turn
 	can_hold = true
@@ -99,7 +99,6 @@ func spawn_current_shape() -> void:
 	# 4. Create blocks
 	var shape_data = TETROMINOES[current_shape_key]
 	var shape_color = COLORS[current_shape_key]
-	
 	for grid_pos in shape_data:
 		var block = Sprite2D.new()
 		block.texture = BLOCK_TEXTURE
@@ -256,10 +255,13 @@ func hard_drop() -> void:
 	lock_piece()
 
 func lock_piece() -> void:
-	var tile_id = TILE_IDS[current_shape_key]
+	# 1. Kill the ghost instantly so it doesn't overlap the new tiles
+	for child in ghost_piece.get_children():
+		child.queue_free()
 	
-	# 1. Get the correct Source ID dynamically
+	# 2. Get the correct Source ID dynamically
 	# (This grabs the ID of the first source in the list)
+	var tile_id = TILE_IDS[current_shape_key]
 	var source_id = board_layer.tile_set.get_source_id(0)
 	for block in piece.get_children():
 		var global_pos = piece.position + block.position
