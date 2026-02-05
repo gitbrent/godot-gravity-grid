@@ -369,8 +369,8 @@ func shift_rows_down(empty_row_y: int) -> void:
 			# Clear the row above (it has moved down)
 			board_layer.set_cell(Vector2i(x, y - 1), -1)
 
-# Checks if the active piece WOULD be valid at a specific offset
 func is_position_valid(test_offset: Vector2) -> bool:
+	### Checks if the active piece WOULD be valid at a specific offset
 	var test_pos = piece.position + test_offset
 	
 	for block in piece.get_children():
