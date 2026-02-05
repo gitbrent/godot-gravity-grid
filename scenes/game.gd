@@ -17,6 +17,7 @@ extends Node2D
 @onready var final_score_label: Label = $UI/GameOverMenu/CenterContainer/VBoxContainer/FinalScoreLabel
 @onready var restart_button: TextureButton = $UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton
 @onready var sound_manager: Node = $SoundManager
+@onready var ghost_piece: Node2D = $GameWorld/GhostPiece
 # --- CONST VARS ---
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const CELL_SIZE = 32
@@ -182,7 +183,10 @@ func rotate_piece() -> void:
 		block.position = new_positions[i]
 		i += 1
 	
-	# 5. SFX
+	# 5. Ghost piece
+	update_ghost()
+	
+	# 6. SFX
 	sound_manager.play_rotate()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -193,6 +197,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_down"): move_piece(Vector2.DOWN)
 	elif event.is_action_pressed("ui_up"): rotate_piece()
 	elif event.is_action_pressed("hold_piece"): hold_piece()
+	elif event.is_action_pressed("ui_accept"): hard_drop()
 
 func _on_gravity_tick() -> void:
 	move_piece(Vector2.DOWN)
@@ -230,9 +235,23 @@ func move_piece(dir: Vector2) -> bool:
 	# LAST: If we made it here, the move is valid!
 	# If move is valid (at the very end of the function)
 	piece.position = target_pos
+	update_ghost()
 	if dir != Vector2.DOWN:
 		sound_manager.play_move()
 	return true # Move Succeeded
+
+func hard_drop() -> void:
+	# 1. Find the drop distance (Reuse ghost logic logic!)
+	var drop_offset = Vector2.ZERO
+	while is_position_valid(drop_offset + Vector2(0, CELL_SIZE)):
+		drop_offset += Vector2(0, CELL_SIZE)
+	
+	# 2. Apply Move
+	piece.position += drop_offset
+	add_score(2 * (drop_offset.y / CELL_SIZE)) # Bonus points for hard dropping!
+	
+	# 3. Lock instantly
+	lock_piece()
 
 func lock_piece() -> void:
 	var tile_id = TILE_IDS[current_shape_key]
@@ -298,6 +317,49 @@ func shift_rows_down(empty_row_y: int) -> void:
 			
 			# Clear the row above (it has moved down)
 			board_layer.set_cell(Vector2i(x, y - 1), -1)
+
+# Checks if the active piece WOULD be valid at a specific offset
+func is_position_valid(test_offset: Vector2) -> bool:
+	var test_pos = piece.position + test_offset
+	
+	for block in piece.get_children():
+		var block_global_pos = test_pos + block.position
+		var grid_pos = board_layer.local_to_map(block_global_pos)
+		
+		# 1. Wall Checks
+		if block_global_pos.x < 0 or block_global_pos.x >= GRID_WIDTH:
+			return false
+		
+		# 2. Floor Check
+		if block_global_pos.y >= FLOOR_Y:
+			return false
+			
+		# 3. Board Collision
+		if board_layer.get_cell_source_id(grid_pos) != -1:
+			return false
+			
+	return true
+
+func update_ghost() -> void:
+	# 1. Clear old ghost blocks
+	for child in ghost_piece.get_children():
+		child.queue_free()
+		
+	# 2. Copy the Active Piece's shape/color
+	# We duplicate the sprites so they look identical (just transparent)
+	for block in piece.get_children():
+		var ghost_block = block.duplicate()
+		ghost_piece.add_child(ghost_block)
+	
+	# 3. Find the lowest valid position (Hard Drop Simulation)
+	var drop_offset = Vector2.ZERO
+	
+	# Keep adding "DOWN" until we hit something
+	while is_position_valid(drop_offset + Vector2(0, CELL_SIZE)):
+		drop_offset += Vector2(0, CELL_SIZE)
+		
+	# 4. Place the ghost there
+	ghost_piece.position = piece.position + drop_offset
 
 func add_score(lines_count: int) -> void:
 	# Standard Arcade Scoring Rules

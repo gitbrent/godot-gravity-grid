@@ -35,6 +35,9 @@ script = ExtResource("1_47u71")
 [node name="BoardLayer" type="TileMapLayer" parent="." unique_id=185866306]
 tile_set = SubResource("TileSet_uwrxv")
 
+[node name="GhostPiece" type="Node2D" parent="." unique_id=1077595308]
+modulate = Color(1, 1, 1, 0.35000002)
+
 [node name="ActivePiece" type="Node2D" parent="." unique_id=1033981946]
 
 [node name="GravityTimer" type="Timer" parent="." unique_id=348463019]
