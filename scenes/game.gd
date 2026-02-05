@@ -20,9 +20,11 @@ extends Node2D
 @onready var ghost_piece: Node2D = $GameWorld/GhostPiece
 # --- CONST VARS ---
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
+const GHOST_TEXTURE = preload("res://assets/ghost_bevel.tres")
 const CELL_SIZE = 32
 const GRID_WIDTH = 10 * CELL_SIZE
 const FLOOR_Y = 19 * CELL_SIZE
+const DROP_SPEED_DELAY = 0.8 # Starts at 0.8s (Slow)
 # --- DATA [ENUMS] ---
 const TETROMINOES = {
 	"I": [Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)],
@@ -69,7 +71,7 @@ func _on_start_pressed() -> void:
 	score = 0
 	current_level = 1
 	lines_cleared_total = 0
-	timer.wait_time = 0.5 # Reset speed
+	timer.wait_time = DROP_SPEED_DELAY
 	update_ui()
 	# 3.  
 	spawn_piece_from_next()
@@ -345,20 +347,27 @@ func update_ghost() -> void:
 	for child in ghost_piece.get_children():
 		child.queue_free()
 		
-	# 2. Copy the Active Piece's shape/color
-	# We duplicate the sprites so they look identical (just transparent)
+	# 2. Create Ghost Blocks
 	for block in piece.get_children():
-		var ghost_block = block.duplicate()
+		# Instead of duplicate(), we create a new Sprite so we can change the texture
+		var ghost_block = Sprite2D.new()
+		ghost_block.texture = GHOST_TEXTURE # <--- USE THE HOLLOW TEXTURE
+		ghost_block.position = block.position
+		
+		# Optional: Keep the color of the original piece, but faint?
+		# Or just keep it white/grey?
+		# Let's tint it slightly to match the piece color, but keep it transparent
+		ghost_block.modulate = block.modulate 
+		ghost_block.modulate.a = 0.5 # Force transparency logic here
+		
 		ghost_piece.add_child(ghost_block)
 	
-	# 3. Find the lowest valid position (Hard Drop Simulation)
+	# 3. Find Drop Position (Same as before)
 	var drop_offset = Vector2.ZERO
-	
-	# Keep adding "DOWN" until we hit something
 	while is_position_valid(drop_offset + Vector2(0, CELL_SIZE)):
 		drop_offset += Vector2(0, CELL_SIZE)
 		
-	# 4. Place the ghost there
+	# 4. Place Ghost
 	ghost_piece.position = piece.position + drop_offset
 
 func add_score(lines_count: int) -> void:
@@ -389,9 +398,9 @@ func check_level_up() -> void:
 		print("Level Up! Welcome to Level ", current_level)
 
 func increase_speed() -> void:
-	# Decrease timer wait time (make it faster)
-	# Curve: Starts at 0.5s, decreases by 0.05s per level, caps at 0.05s
-	var new_wait_time = max(0.05, 0.5 - ((current_level - 1) * 0.05))
+	### Decrease timer wait time (make it faster)
+	# Delat starts at DROP_SPEED_DELAY, decreases by 0.03s per level
+	var new_wait_time = max(0.05, DROP_SPEED_DELAY - ((current_level - 1) * 0.03)) 
 	timer.wait_time = new_wait_time
 
 func update_ui() -> void:
