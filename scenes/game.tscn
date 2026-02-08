@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dtxit1j5c8fdb" path="res://scenes/game.gd" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://0uow7lx0oaje" path="res://scenes/game_world.tscn" id="2_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://cli7unhcevaru" path="res://assets/Box_Blue_Rounded.png" id="3_ir15t"]
 [ext_resource type="Script" uid="uid://cyg04cc2gi30i" path="res://scenes/next_piece_preview.gd" id="3_lnu2h"]
 [ext_resource type="FontFile" uid="uid://cr4326f73dk4p" path="res://assets/fonts/Kenney Pixel.ttf" id="4_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://dxdwygbbv2lnn" path="res://assets/blue_button03.png" id="4_u5sy4"]
@@ -15,8 +16,15 @@
 [ext_resource type="AudioStream" uid="uid://ds1sc41d5rmag" path="res://assets/audio/game_over.ogg" id="12_rysoc"]
 [ext_resource type="AudioStream" uid="uid://seeuj02ndtl7" path="res://assets/audio/game_start.ogg" id="13_ssvqc"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqjtg"]
-bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ca42v"]
+texture = ExtResource("3_ir15t")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ir15t"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8, 0.8, 0.8, 0.5019608)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lnu2h"]
 bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
@@ -37,6 +45,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="ColorRect" type="ColorRect" parent="UI/HUD" unique_id=1671678024]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 640.0
+color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD" unique_id=867969968]
 layout_mode = 1
 anchors_preset = 15
@@ -46,28 +61,26 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="LeftStats" type="Panel" parent="UI/HUD/HBoxContainer" unique_id=1774482826]
+[node name="LeftStats" type="VBoxContainer" parent="UI/HUD/HBoxContainer" unique_id=1349462786]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
+alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=1207315426]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="HoldContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=599495438]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ca42v")
 
-[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=783918232]
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer" unique_id=783918232]
 layout_mode = 2
 
-[node name="HoldPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer/CenterContainer" unique_id=845994456]
+[node name="HoldPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer/CenterContainer" unique_id=845994456]
 custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 script = ExtResource("3_lnu2h")
 
-[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer/CenterContainer/HoldPiecePreview" unique_id=2008834259]
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer/CenterContainer/HoldPiecePreview" unique_id=2008834259]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,8 +89,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
-[node name="Label1" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1351360283]
-custom_minimum_size = Vector2(0, 50)
+[node name="Spacer" type="Control" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=685608383]
+layout_mode = 2
+
+[node name="StatsContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=1207315426]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ScoreHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=1351360283]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
@@ -85,7 +104,7 @@ text = "SCORE"
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=537091765]
+[node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=537091765]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.81352156, 0.38857287, 0.97269243, 1)
 theme_override_fonts/font = ExtResource("4_lbhrr")
@@ -93,8 +112,7 @@ theme_override_font_sizes/font_size = 64
 text = "0"
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=1441816458]
-custom_minimum_size = Vector2(0, 50)
+[node name="LabelHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=1441816458]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
@@ -102,7 +120,7 @@ text = "LEVEL"
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=196952403]
+[node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=196952403]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
 theme_override_fonts/font = ExtResource("4_lbhrr")
@@ -110,8 +128,7 @@ theme_override_font_sizes/font_size = 64
 text = "1"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=49622651]
-custom_minimum_size = Vector2(0, 50)
+[node name="LinesHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=49622651]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
@@ -119,7 +136,7 @@ text = "LINES"
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/VBoxContainer" unique_id=47901951]
+[node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=47901951]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8249593, 0, 1)
 theme_override_fonts/font = ExtResource("4_lbhrr")
@@ -131,6 +148,15 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(320, 640)
 layout_mode = 2
 size_flags_horizontal = 4
+
+[node name="Panel" type="Panel" parent="UI/HUD/HBoxContainer/GamePlaceholder" unique_id=817693570]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ir15t")
 
 [node name="RightStats" type="Panel" parent="UI/HUD/HBoxContainer" unique_id=1811104961]
 layout_mode = 2
