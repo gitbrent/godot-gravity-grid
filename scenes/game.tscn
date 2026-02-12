@@ -5,9 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://cli7unhcevaru" path="res://assets/Box_Blue_Rounded.png" id="3_ir15t"]
 [ext_resource type="Script" uid="uid://cyg04cc2gi30i" path="res://scenes/next_piece_preview.gd" id="3_lnu2h"]
 [ext_resource type="FontFile" uid="uid://cr4326f73dk4p" path="res://assets/fonts/Kenney Pixel.ttf" id="4_lbhrr"]
-[ext_resource type="Texture2D" uid="uid://dxdwygbbv2lnn" path="res://assets/blue_button03.png" id="4_u5sy4"]
 [ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
 [ext_resource type="Texture2D" uid="uid://bhfiy4eisd3y2" path="res://assets/blue_button00.png" id="6_p57ef"]
+[ext_resource type="Texture2D" uid="uid://1u3j1c5k6b3n" path="res://assets/ButtonText_Large_Green_Square.png" id="7_ca42v"]
 [ext_resource type="AudioStream" uid="uid://cgecfq6nys7e2" path="res://assets/audio/piece_move.ogg" id="8_kvuet"]
 [ext_resource type="Script" uid="uid://bfvt03shpuds2" path="res://scenes/sound_manager.gd" id="8_trtic"]
 [ext_resource type="AudioStream" uid="uid://cr1vvfvdu8w7d" path="res://assets/audio/piece_rotate.ogg" id="9_trtic"]
@@ -21,13 +21,10 @@ texture = ExtResource("3_ir15t")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ir15t"]
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.8, 0.8, 0.8, 0.5019608)
+border_color = Color(0, 0, 0, 0.5019608)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lnu2h"]
-bg_color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rysoc"]
+texture = ExtResource("7_ca42v")
 
 [node name="Game" type="Node2D" unique_id=1359667113]
 script = ExtResource("1_uwrxv")
@@ -66,6 +63,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
+[node name="HoldHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=706279302]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "HOLD"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="HoldContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=599495438]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
@@ -90,6 +95,7 @@ grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="Spacer" type="Control" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=685608383]
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 
 [node name="StatsContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=1207315426]
@@ -158,25 +164,34 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ir15t")
 
-[node name="RightStats" type="Panel" parent="UI/HUD/HBoxContainer" unique_id=1811104961]
+[node name="RightStats" type="VBoxContainer" parent="UI/HUD/HBoxContainer" unique_id=1551084711]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_lnu2h")
+alignment = 1
 
-[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1414023374]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="NextHeader" type="Label" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1300383485]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "NEXT"
+horizontal_alignment = 1
+vertical_alignment = 2
 
-[node name="NextPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/RightStats/CenterContainer" unique_id=452286977]
+[node name="NextContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1292033109]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ca42v")
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/RightStats/NextContainer" unique_id=1414023374]
+layout_mode = 2
+
+[node name="NextPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/RightStats/NextContainer/CenterContainer" unique_id=452286977]
 custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 script = ExtResource("3_lnu2h")
 
-[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/RightStats/CenterContainer/NextPiecePreview" unique_id=1907555742]
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/RightStats/NextContainer/CenterContainer/NextPiecePreview" unique_id=1907555742]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -201,16 +216,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/MainMenu/CenterContainer" unique_id=51651952]
+[node name="StartButton" type="Button" parent="UI/MainMenu/CenterContainer" unique_id=1441888936]
+custom_minimum_size = Vector2(200, 75)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_rysoc")
+theme_override_styles/hover = SubResource("StyleBoxTexture_rysoc")
 
-[node name="StartButton" type="TextureButton" parent="UI/MainMenu/CenterContainer/VBoxContainer" unique_id=1910380678]
-layout_mode = 2
-size_flags_vertical = 4
-texture_normal = ExtResource("4_u5sy4")
-metadata/_edit_use_anchors_ = true
-
-[node name="Label" type="Label" parent="UI/MainMenu/CenterContainer/VBoxContainer/StartButton" unique_id=505381927]
+[node name="Label" type="Label" parent="UI/MainMenu/CenterContainer/StartButton" unique_id=1628949465]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

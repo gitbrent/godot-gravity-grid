@@ -43,7 +43,8 @@ tile_set = SubResource("TileSet_uwrxv")
 wait_time = 0.5
 
 [node name="Floor" type="ColorRect" parent="." unique_id=2061820082]
+visible = false
 offset_top = 608.0
 offset_right = 320.0
 offset_bottom = 640.0
-color = Color(1, 0.023529412, 0.023529412, 1)
+color = Color(0, 0.023529412, 0.023529412, 0.78431374)
