@@ -7,7 +7,7 @@ const BASE_CELL_SIZE = 32
 const DRAW_CELL_SIZE = BASE_CELL_SIZE * PREVIEW_SCALE
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 
-func update_preview(shape_data: Array, color: Color, shape_key: String) -> void:
+func update_preview(shape_data: Array, color: Color) -> void:
 	# Clear previous drawing
 	queue_redraw()
 	

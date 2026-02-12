@@ -23,7 +23,7 @@ const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const GHOST_TEXTURE = preload("res://assets/ghost_bevel.tres")
 const CELL_SIZE = 32
 const GRID_WIDTH = 10 * CELL_SIZE
-const FLOOR_Y = 19 * CELL_SIZE
+const FLOOR_Y = 20 * CELL_SIZE
 const DROP_SPEED_DELAY = 0.8 # Starts at 0.8s (Slow)
 # --- DATA [ENUMS] ---
 const TETROMINOES = {
@@ -137,7 +137,7 @@ func spawn_current_shape() -> void:
 func update_next_piece_ui() -> void:
 	var data = TETROMINOES[next_shape_key]
 	var color = COLORS[next_shape_key]
-	next_piece_preview.update_preview(data, color, next_shape_key)
+	next_piece_preview.update_preview(data, color)
 
 func hold_piece() -> void:
 	if not can_hold:
@@ -167,7 +167,7 @@ func hold_piece() -> void:
 	# 4. Update UI
 	var data = TETROMINOES[hold_shape_key]
 	var color = COLORS[hold_shape_key]
-	hold_piece_preview.update_preview(data, color, hold_shape_key)
+	hold_piece_preview.update_preview(data, color)
 
 func rotate_piece() -> void:
 	# 1. The "O" piece (Square) never rotates
@@ -398,19 +398,18 @@ func update_ghost() -> void:
 		
 	# 2. Create Ghost Blocks
 	for block in piece.get_children():
-		# Instead of duplicate(), we create a new Sprite so we can change the texture
+		# 2.1: Instead of duplicate(), we create a new Sprite so we can change the texture
 		var ghost_block = Sprite2D.new()
-		ghost_block.texture = GHOST_TEXTURE # <--- USE THE HOLLOW TEXTURE
+		ghost_block.texture = GHOST_TEXTURE
 		ghost_block.position = block.position
 		
-		# Optional: Keep the color of the original piece, but faint?
-		# Or just keep it white/grey?
-		# Let's tint it slightly to match the piece color, but keep it transparent
+		# 2.2: Let's tint it slightly to match the piece color, but keep it transparent
 		ghost_block.modulate = block.modulate 
-		ghost_block.modulate.a = 0.5 # Force transparency logic here
+		#ghost_block.modulate.a = 0.5 # Force transparency logic here # NOTE: nah, dark colors are too washed out
 		
+		# 2.3: Add
 		ghost_piece.add_child(ghost_block)
-	
+		
 	# 3. Find Drop Position (Same as before)
 	var drop_offset = Vector2.ZERO
 	while is_position_valid(drop_offset + Vector2(0, CELL_SIZE)):
