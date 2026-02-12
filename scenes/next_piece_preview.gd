@@ -1,7 +1,10 @@
 extends Control
 
-const PREVIEW_SCALE = 0.6
-const CELL_SIZE = 32 * PREVIEW_SCALE
+# SCALE: 0.8 fits a 4-block "I" piece comfortably inside a 128px panel.
+# Set to 1.0 if you want them to match the board exactly (but watch for clipping!)
+const PREVIEW_SCALE = 0.8
+const BASE_CELL_SIZE = 32
+const DRAW_CELL_SIZE = BASE_CELL_SIZE * PREVIEW_SCALE
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 
 func update_preview(shape_data: Array, color: Color, shape_key: String) -> void:
@@ -11,25 +14,46 @@ func update_preview(shape_data: Array, color: Color, shape_key: String) -> void:
 	# Store data for _draw
 	set_meta("shape", shape_data)
 	set_meta("color", color)
-	set_meta("key", shape_key)
 
 func _draw() -> void:
 	if not has_meta("shape"): return
 	
 	var shape = get_meta("shape")
 	var color = get_meta("color")
-	var key = get_meta("key")
 	
-	var center_offset = get_size() / 2
-	
-	# Adjust offsets based on shape to center them visually
-	var shape_offset = Vector2.ZERO
-	if key == "I": shape_offset = Vector2(-0.5, -0.5) * CELL_SIZE
-	elif key == "O": shape_offset = Vector2(-0.5, -0.5) * CELL_SIZE
+	# 1. Calculate the Bounding Box of the shape dynamically
+	var min_x = 999
+	var max_x = -999
+	var min_y = 999
+	var max_y = -999
 	
 	for grid_pos in shape:
-		var draw_pos = center_offset + (Vector2(grid_pos) * CELL_SIZE) + shape_offset
-		var rect = Rect2(draw_pos, Vector2(CELL_SIZE, CELL_SIZE))
+		if grid_pos.x < min_x: min_x = grid_pos.x
+		if grid_pos.x > max_x: max_x = grid_pos.x
+		if grid_pos.y < min_y: min_y = grid_pos.y
+		if grid_pos.y > max_y: max_y = grid_pos.y
 		
-		# Draw the texture with tint
+	# 2. Calculate pixel dimensions
+	# (+1 because a block at index 0 has a width of 1)
+	var width_px = (max_x - min_x + 1) * DRAW_CELL_SIZE
+	var height_px = (max_y - min_y + 1) * DRAW_CELL_SIZE
+	
+	# 3. Calculate Center Offset
+	# We align the center of the Shape's Bounding Box to the Control's Center
+	var control_center = get_size() / 2
+	
+	# The top-left of the bounds (relative to the pivot 0,0)
+	var bounds_top_left = Vector2(min_x, min_y) * DRAW_CELL_SIZE
+	
+	# The actual center of the shape logic
+	var shape_center_offset = bounds_top_left + Vector2(width_px, height_px) / 2.0
+	
+	# The final draw offset
+	var final_offset = control_center - shape_center_offset
+	
+	# 4. Draw
+	for grid_pos in shape:
+		var draw_pos = (Vector2(grid_pos) * DRAW_CELL_SIZE) + final_offset
+		var rect = Rect2(draw_pos, Vector2(DRAW_CELL_SIZE, DRAW_CELL_SIZE))
+		
 		draw_texture_rect(BLOCK_TEXTURE, rect, false, color)
