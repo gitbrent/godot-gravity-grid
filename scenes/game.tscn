@@ -42,10 +42,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="UI/HUD" unique_id=1671678024]
+[node name="ColorRectL" type="ColorRect" parent="UI/HUD" unique_id=1671678024]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 0
 offset_right = 160.0
+offset_bottom = 640.0
+color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+
+[node name="ColorRectR" type="ColorRect" parent="UI/HUD" unique_id=2046374128]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 0
+offset_left = 480.0
+offset_right = 640.0
 offset_bottom = 640.0
 color = Color(0.1764706, 0.1764706, 0.2509804, 1)
 
@@ -95,30 +103,14 @@ grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
 
 [node name="Spacer" type="Control" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=685608383]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 
 [node name="StatsContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=1207315426]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="ScoreHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=1351360283]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 36
-text = "SCORE"
-horizontal_alignment = 1
-vertical_alignment = 2
-
-[node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=537091765]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.81352156, 0.38857287, 0.97269243, 1)
-theme_override_fonts/font = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 64
-text = "0"
-horizontal_alignment = 1
-
-[node name="LabelHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=1441816458]
+[node name="LevelHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=1441816458]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 36
@@ -130,24 +122,8 @@ vertical_alignment = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
 theme_override_fonts/font = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 64
+theme_override_font_sizes/font_size = 120
 text = "1"
-horizontal_alignment = 1
-
-[node name="LinesHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=49622651]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 36
-text = "LINES"
-horizontal_alignment = 1
-vertical_alignment = 2
-
-[node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/StatsContainer" unique_id=47901951]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.8249593, 0, 1)
-theme_override_fonts/font = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 64
-text = "0"
 horizontal_alignment = 1
 
 [node name="GamePlaceholder" type="Control" parent="UI/HUD/HBoxContainer" unique_id=793255553]
@@ -199,6 +175,46 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
+
+[node name="Spacer" type="Control" parent="UI/HUD/HBoxContainer/RightStats" unique_id=163194309]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+
+[node name="StatsContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1467327188]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScoreHeader" type="Label" parent="UI/HUD/HBoxContainer/RightStats/StatsContainer" unique_id=1298474042]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "SCORE"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/RightStats/StatsContainer" unique_id=1547220450]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.81352156, 0.38857287, 0.97269243, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+
+[node name="LinesHeader" type="Label" parent="UI/HUD/HBoxContainer/RightStats/StatsContainer" unique_id=2128951973]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "LINES"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/RightStats/StatsContainer" unique_id=1610245648]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8249593, 0, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
 
 [node name="MainMenu" type="Control" parent="UI" unique_id=1196798541]
 layout_mode = 3
