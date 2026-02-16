@@ -8,6 +8,7 @@
 [ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
 [ext_resource type="Texture2D" uid="uid://f53gafi5ov2x" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Lock_01a1.png" id="6_ca42v"]
 [ext_resource type="Texture2D" uid="uid://br8fssrwlh78t" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Press_01a1.png" id="7_rysoc"]
+[ext_resource type="StyleBox" uid="uid://cabil1shsn5qa" path="res://assets/ui-crusenho/btn_style_box_texture.tres" id="7_ssvqc"]
 [ext_resource type="AudioStream" uid="uid://cgecfq6nys7e2" path="res://assets/audio/piece_move.ogg" id="8_kvuet"]
 [ext_resource type="Texture2D" uid="uid://e5p1rmyt0ip3" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Release_01a1.png" id="8_rysoc"]
 [ext_resource type="Script" uid="uid://bfvt03shpuds2" path="res://scenes/sound_manager.gd" id="8_trtic"]
@@ -25,14 +26,32 @@ spacing_top = -9
 bg_color = Color(0, 0, 0, 0)
 border_color = Color(0, 0, 0, 0.5019608)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ssvqc"]
-texture = ExtResource("6_ca42v")
-
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_264po"]
+content_margin_left = 40.0
+content_margin_top = 20.0
+content_margin_right = 40.0
+content_margin_bottom = 20.0
 texture = ExtResource("7_rysoc")
+texture_margin_top = 7.0
+texture_margin_bottom = 7.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1kice"]
+content_margin_left = 40.0
+content_margin_top = 20.0
+content_margin_right = 40.0
+content_margin_bottom = 20.0
 texture = ExtResource("8_rysoc")
+texture_margin_top = 7.0
+texture_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ca42v"]
+content_margin_top = 15.0
+content_margin_bottom = 15.0
+texture = ExtResource("6_ca42v")
+texture_margin_top = 7.0
+texture_margin_bottom = 6.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
 
 [node name="Game" type="Node2D" unique_id=1359667113]
 script = ExtResource("1_uwrxv")
@@ -265,22 +284,13 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="StartButton" type="Button" parent="UI/MainMenu/CenterContainer" unique_id=1441888936]
-custom_minimum_size = Vector2(200, 75)
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxTexture_ssvqc")
+theme_override_fonts/font = ExtResource("5_iywne")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = ExtResource("7_ssvqc")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_264po")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1kice")
-
-[node name="Label" type="Label" parent="UI/MainMenu/CenterContainer/StartButton" unique_id=1628949465]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "START GAME"
-horizontal_alignment = 1
-vertical_alignment = 1
+text = "Start Game"
 
 [node name="GameOverMenu" type="Control" parent="UI" unique_id=2018667270]
 visible = false
@@ -326,21 +336,10 @@ theme_override_fonts/font = ExtResource("5_iywne")
 text = "Final Score: 0"
 horizontal_alignment = 1
 
-[node name="RestartButton" type="TextureButton" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=1361706753]
+[node name="RestartButton" type="Button" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=1094748938]
 layout_mode = 2
-texture_normal = ExtResource("6_ca42v")
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="UI/GameOverMenu/CenterContainer/VBoxContainer/RestartButton" unique_id=1054393127]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "TRY AGAIN"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_styles/normal = SubResource("StyleBoxTexture_ca42v")
+text = "Try Again"
 
 [node name="SoundManager" type="Node" parent="." unique_id=12747307]
 script = ExtResource("8_trtic")
