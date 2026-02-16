@@ -1,0 +1,8 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://bk31bctsccxlk"]
+
+[ext_resource type="Texture2D" uid="uid://j80xeuoung6" path="res://assets/ui-crusenho/UI_Hologram_Frame_Standard_02a.png" id="1_kqoh4"]
+
+[resource]
+content_margin_top = 10.0
+content_margin_bottom = 5.0
+texture = ExtResource("1_kqoh4")
