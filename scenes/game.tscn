@@ -7,6 +7,7 @@
 [ext_resource type="FontFile" uid="uid://cr4326f73dk4p" path="res://assets/fonts/Kenney Pixel.ttf" id="4_lbhrr"]
 [ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
 [ext_resource type="Texture2D" uid="uid://f53gafi5ov2x" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Lock_01a1.png" id="6_ca42v"]
+[ext_resource type="Script" uid="uid://ciqk8lmbi6r2" path="res://scripts/progress_ring.gd" id="6_ssvqc"]
 [ext_resource type="Texture2D" uid="uid://br8fssrwlh78t" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Press_01a1.png" id="7_rysoc"]
 [ext_resource type="StyleBox" uid="uid://cabil1shsn5qa" path="res://assets/ui-crusenho/btn_style_box_texture.tres" id="7_ssvqc"]
 [ext_resource type="AudioStream" uid="uid://cgecfq6nys7e2" path="res://assets/audio/piece_move.ogg" id="8_kvuet"]
@@ -153,8 +154,18 @@ text = "LEVEL"
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer" unique_id=196952403]
+[node name="LevelStack" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer" unique_id=2012408074]
 custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+
+[node name="ProgressRing" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelStack" unique_id=1062587288]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+script = ExtResource("6_ssvqc")
+radius = 50.0
+bg_color = Color(0.27058825, 0.27058825, 0.27058825, 1)
+
+[node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelStack" unique_id=196952403]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
 theme_override_fonts/font = SubResource("FontVariation_rysoc")

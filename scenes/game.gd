@@ -10,7 +10,8 @@ extends Node2D
 @onready var game_placeholder: Control = $UI/HUD/HBoxContainer/GamePlaceholder
 @onready var hold_piece_preview: Control = $UI/HUD/HBoxContainer/LeftStats/HoldContainer/VBoxContainer/CenterContainer/HoldPiecePreview
 @onready var next_piece_preview: Control = $UI/HUD/HBoxContainer/RightStats/NextContainer/VBoxContainer/CenterContainer/NextPiecePreview
-@onready var level_label: Label = $UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelLabel
+@onready var level_label: Label = $UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelStack/LevelLabel
+@onready var progress_ring: Control = $UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelStack/ProgressRing
 @onready var score_label: Label = $UI/HUD/HBoxContainer/RightStats/ScoreContainer/VBoxContainer/ScoreLabel
 @onready var lines_label: Label = $UI/HUD/HBoxContainer/RightStats/LinesContainer/VBoxContainer/LinesLabel
 @onready var final_score_label: Label = $UI/GameOverMenu/CenterContainer/VBoxContainer/FinalScoreLabel
@@ -455,9 +456,19 @@ func increase_speed() -> void:
 	timer.wait_time = new_wait_time
 
 func update_ui() -> void:
+	# 1: score
 	score_label.text = str(score)
+	# 2: level
 	level_label.text = str(current_level)
+	# 3: lines and progress_ring
 	lines_label.text = str(lines_cleared_total)
+	# Calculate Progress (0.0 to 1.0)
+	# Example: If we have 15 lines total, and levels happen every 10 lines:
+	# lines_in_current_level = 15 % 10 = 5
+	# progress = 5 / 10 = 0.5 (50%)
+	var lines_per_level = 10
+	var progress = float(lines_cleared_total % lines_per_level) / float(lines_per_level)
+	progress_ring.set_progress(progress)
 
 func game_over() -> void:
 	print("Game Over!")
