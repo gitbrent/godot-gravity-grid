@@ -171,47 +171,54 @@ func hold_piece() -> void:
 	hold_piece_preview.update_preview(data, color)
 
 func rotate_piece() -> void:
-	# 1. The "O" piece (Square) never rotates
-	if current_shape_key == "O":
-		return
+	if current_shape_key == "O": 
+		return # The square doesn't need to rotate!
 
-	# 2. Calculate new positions for all child blocks
+	# 1. Save original positions in case all kicks fail
+	var original_positions = []
 	var new_positions = []
 	for block in piece.get_children():
-		# Get local position relative to the pivot (ActivePiece center)
-		var old_pos = block.position
-		
-		# 90-degree clockwise rotation formula for Godot (Y is down)
-		# x' = -y
-		# y' = x
-		var new_x = -old_pos.y
-		var new_y = old_pos.x
-		new_positions.append(Vector2(new_x, new_y))
+		original_positions.append(block.position)
+		# 90-degree rotation math: (x, y) -> (-y, x)
+		new_positions.append(Vector2(-block.position.y, block.position.x))
 
-	# 3. Validation Check
-	# We must check if these new local positions + the global piece offset are valid
-	for local_pos in new_positions:
-		var global_pos = piece.position + local_pos
-		
-		# Wall Checks
-		if global_pos.x < 0 or global_pos.x >= GRID_WIDTH:
-			return # Wall Kick could go here later, for now just block it
-		
-		# Floor Check
-		if global_pos.y >= FLOOR_Y:
-			return 
-			
-	# 4. Commit the Rotation
+	# 2. Temporarily apply the new rotation to the blocks to test them
 	var i = 0
 	for block in piece.get_children():
 		block.position = new_positions[i]
 		i += 1
-	
-	# 5. Ghost piece
-	update_ghost()
-	
-	# 6. SFX
-	sound_manager.play_rotate()
+
+	# 3. The "Kick" Table (Offsets to test in order)
+	# We test: Center, Left 1, Right 1, Left 2, Right 2, Up 1
+	var kicks = [
+		Vector2(0, 0),
+		Vector2(-CELL_SIZE, 0),
+		Vector2(CELL_SIZE, 0),
+		Vector2(-CELL_SIZE * 2, 0),
+		Vector2(CELL_SIZE * 2, 0),
+		Vector2(0, -CELL_SIZE)
+	]
+
+	var rotation_successful = false
+
+	# 4. Test each kick using our existing validation function
+	for kick in kicks:
+		if is_position_valid(kick):
+			# It fits! Apply the kick offset to the main piece and stop looking.
+			piece.position += kick
+			rotation_successful = true
+			break
+
+	# 5. Finalize or Revert
+	if rotation_successful:
+		update_ghost()
+		sound_manager.play_rotate()
+	else:
+		# If ALL kicks failed, revert the blocks back to their original un-rotated state
+		var j = 0
+		for block in piece.get_children():
+			block.position = original_positions[j]
+			j += 1
 
 func _unhandled_input(event: InputEvent) -> void:
 	if timer.is_stopped(): return # Don't move if game over
