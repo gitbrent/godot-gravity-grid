@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://da76omehtxk8g"]
+
+[ext_resource type="Script" uid="uid://b3642s0xfllys" path="res://scenes/line_clear_particles.gd" id="1_rxtm2"]
+
+[node name="LineClearParticles" type="CPUParticles2D" unique_id=1240279160]
+emitting = false
+amount = 40
+one_shot = true
+explosiveness = 1.0
+randomness = 0.5
+emission_shape = 3
+emission_rect_extents = Vector2(160, 16)
+direction = Vector2(1, -1)
+spread = 100.0
+gravity = Vector2(0, 800)
+initial_velocity_min = 150.0
+initial_velocity_max = 300.0
+scale_amount_max = 4.0
+color = Color(0, 1, 1, 1)
+script = ExtResource("1_rxtm2")

@@ -20,6 +20,7 @@ extends Node2D
 @onready var sound_manager: Node = $SoundManager
 @onready var ghost_piece: Node2D = $GameWorld/GhostPiece
 # --- CONST VARS ---
+const PARTICLE_SCENE = preload("res://scenes/line_clear_particles.tscn")
 const BLOCK_TEXTURE = preload("res://assets/block_bevel.tres")
 const GHOST_TEXTURE = preload("res://assets/ghost_bevel.tres")
 const CELL_SIZE = 32
@@ -340,10 +341,16 @@ func check_lines() -> void:
 	var row = 19
 	while row >= 0:
 		if is_row_full(row):
+			# 1. Show particles
+			var particles = PARTICLE_SCENE.instantiate()
+			# Place it vertically at the row's height, horizontally centered
+			particles.position = Vector2(10 * CELL_SIZE / 2.0, row * CELL_SIZE)
+			board_layer.add_child(particles) # Or add it to GameWorld
+			# 2. update UI
 			delete_row(row)
 			shift_rows_down(row)
 			lines_cleared_this_turn += 1
-			# Note: We stay on 'row' index to check the new line that dropped in
+			# NOTE: We stay on 'row' index to check the new line that dropped in
 		else:
 			row -= 1
 			
