@@ -1,0 +1,373 @@
+[gd_scene format=3 uid="uid://b6yq48f44p5je"]
+
+[ext_resource type="Script" uid="uid://dtxit1j5c8fdb" path="res://scenes/game.gd" id="1_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://0uow7lx0oaje" path="res://scenes/game_world.tscn" id="2_yqjtg"]
+[ext_resource type="StyleBox" uid="uid://bk31bctsccxlk" path="res://assets/ui-crusenho/style_scifi_panel_blue.tres" id="3_ir15t"]
+[ext_resource type="Script" uid="uid://cyg04cc2gi30i" path="res://scenes/next_piece_preview.gd" id="3_lnu2h"]
+[ext_resource type="FontFile" uid="uid://cr4326f73dk4p" path="res://assets/fonts/Kenney Pixel.ttf" id="4_lbhrr"]
+[ext_resource type="FontFile" uid="uid://bnfi8glg866aa" path="res://assets/fonts/Kenney Future.ttf" id="5_iywne"]
+[ext_resource type="Texture2D" uid="uid://f53gafi5ov2x" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Lock_01a1.png" id="6_ca42v"]
+[ext_resource type="Script" uid="uid://ciqk8lmbi6r2" path="res://scripts/progress_ring.gd" id="6_ssvqc"]
+[ext_resource type="Texture2D" uid="uid://br8fssrwlh78t" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Press_01a1.png" id="7_rysoc"]
+[ext_resource type="StyleBox" uid="uid://cabil1shsn5qa" path="res://assets/ui-crusenho/btn_style_box_texture.tres" id="7_ssvqc"]
+[ext_resource type="AudioStream" uid="uid://cgecfq6nys7e2" path="res://assets/audio/piece_move.ogg" id="8_kvuet"]
+[ext_resource type="Texture2D" uid="uid://e5p1rmyt0ip3" path="res://assets/ui-crusenho/UI_Hologram_Button_Large_Release_01a1.png" id="8_rysoc"]
+[ext_resource type="Script" uid="uid://bfvt03shpuds2" path="res://scenes/sound_manager.gd" id="8_trtic"]
+[ext_resource type="AudioStream" uid="uid://cr1vvfvdu8w7d" path="res://assets/audio/piece_rotate.ogg" id="9_trtic"]
+[ext_resource type="AudioStream" uid="uid://pvneiepwtoln" path="res://assets/audio/piece_lock.ogg" id="10_ir15t"]
+[ext_resource type="AudioStream" uid="uid://sx18e82f8581" path="res://assets/audio/line_cleared.ogg" id="11_ca42v"]
+[ext_resource type="AudioStream" uid="uid://ds1sc41d5rmag" path="res://assets/audio/game_over.ogg" id="12_rysoc"]
+[ext_resource type="AudioStream" uid="uid://seeuj02ndtl7" path="res://assets/audio/game_start.ogg" id="13_ssvqc"]
+
+[sub_resource type="FontVariation" id="FontVariation_rysoc"]
+base_font = ExtResource("4_lbhrr")
+spacing_top = -9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ir15t"]
+bg_color = Color(0, 0, 0, 0)
+border_color = Color(0, 0, 0, 0.5019608)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_264po"]
+content_margin_left = 40.0
+content_margin_top = 20.0
+content_margin_right = 40.0
+content_margin_bottom = 20.0
+texture = ExtResource("7_rysoc")
+texture_margin_top = 7.0
+texture_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1kice"]
+content_margin_left = 40.0
+content_margin_top = 20.0
+content_margin_right = 40.0
+content_margin_bottom = 20.0
+texture = ExtResource("8_rysoc")
+texture_margin_top = 7.0
+texture_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ca42v"]
+content_margin_top = 15.0
+content_margin_bottom = 15.0
+texture = ExtResource("6_ca42v")
+texture_margin_top = 7.0
+texture_margin_bottom = 6.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+
+[node name="Game" type="Node2D" unique_id=1359667113]
+script = ExtResource("1_uwrxv")
+
+[node name="GameWorld" parent="." unique_id=1751805160 instance=ExtResource("2_yqjtg")]
+position = Vector2(160, 0)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=73125386]
+
+[node name="HUD" type="Control" parent="UI" unique_id=1108870638]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRectL" type="ColorRect" parent="UI/HUD" unique_id=1671678024]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 640.0
+color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+
+[node name="ColorRectR" type="ColorRect" parent="UI/HUD" unique_id=2046374128]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 0
+offset_left = 480.0
+offset_right = 640.0
+offset_bottom = 640.0
+color = Color(0.1764706, 0.1764706, 0.2509804, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD" unique_id=867969968]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="LeftStats" type="VBoxContainer" parent="UI/HUD/HBoxContainer" unique_id=1349462786]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="HoldContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=599495438]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("3_ir15t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer" unique_id=330959608]
+layout_mode = 2
+
+[node name="HoldHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer/VBoxContainer" unique_id=706279302]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "HOLD"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer/VBoxContainer" unique_id=783918232]
+layout_mode = 2
+
+[node name="HoldPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer/VBoxContainer/CenterContainer" unique_id=845994456]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+script = ExtResource("3_lnu2h")
+
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/LeftStats/HoldContainer/VBoxContainer/CenterContainer/HoldPiecePreview" unique_id=2008834259]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
+
+[node name="Spacer" type="Control" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=685608383]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LevelContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/LeftStats" unique_id=693434847]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("3_ir15t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer" unique_id=1207315426]
+layout_mode = 2
+
+[node name="LevelHeader" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer" unique_id=1441816458]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "LEVEL"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="LevelStack" type="CenterContainer" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer" unique_id=2012408074]
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+
+[node name="ProgressRing" type="Control" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelStack" unique_id=1062587288]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+script = ExtResource("6_ssvqc")
+radius = 50.0
+bg_color = Color(0.27058825, 0.27058825, 0.27058825, 1)
+
+[node name="LevelLabel" type="Label" parent="UI/HUD/HBoxContainer/LeftStats/LevelContainer/VBoxContainer/LevelStack" unique_id=196952403]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_fonts/font = SubResource("FontVariation_rysoc")
+theme_override_font_sizes/font_size = 120
+text = "1"
+vertical_alignment = 1
+
+[node name="GamePlaceholder" type="Control" parent="UI/HUD/HBoxContainer" unique_id=793255553]
+custom_minimum_size = Vector2(320, 640)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Panel" type="Panel" parent="UI/HUD/HBoxContainer/GamePlaceholder" unique_id=817693570]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ir15t")
+
+[node name="RightStats" type="VBoxContainer" parent="UI/HUD/HBoxContainer" unique_id=1551084711]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="NextContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1292033109]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("3_ir15t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/RightStats/NextContainer" unique_id=639636865]
+layout_mode = 2
+
+[node name="NextHeader" type="Label" parent="UI/HUD/HBoxContainer/RightStats/NextContainer/VBoxContainer" unique_id=1300383485]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "NEXT"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/HUD/HBoxContainer/RightStats/NextContainer/VBoxContainer" unique_id=1414023374]
+layout_mode = 2
+
+[node name="NextPiecePreview" type="Control" parent="UI/HUD/HBoxContainer/RightStats/NextContainer/VBoxContainer/CenterContainer" unique_id=452286977]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+script = ExtResource("3_lnu2h")
+
+[node name="ColorRect" type="ColorRect" parent="UI/HUD/HBoxContainer/RightStats/NextContainer/VBoxContainer/CenterContainer/NextPiecePreview" unique_id=1907555742]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13816993, 0.13816993, 0.13816993, 0.5)
+
+[node name="Spacer" type="Control" parent="UI/HUD/HBoxContainer/RightStats" unique_id=163194309]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScoreContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=2112272604]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("3_ir15t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/RightStats/ScoreContainer" unique_id=1467327188]
+layout_mode = 2
+
+[node name="ScoreHeader" type="Label" parent="UI/HUD/HBoxContainer/RightStats/ScoreContainer/VBoxContainer" unique_id=1298474042]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "SCORE"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="ScoreLabel" type="Label" parent="UI/HUD/HBoxContainer/RightStats/ScoreContainer/VBoxContainer" unique_id=1547220450]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.81352156, 0.38857287, 0.97269243, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+
+[node name="LinesContainer" type="PanelContainer" parent="UI/HUD/HBoxContainer/RightStats" unique_id=1350425665]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("3_ir15t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HBoxContainer/RightStats/LinesContainer" unique_id=1918224390]
+layout_mode = 2
+
+[node name="LinesHeader" type="Label" parent="UI/HUD/HBoxContainer/RightStats/LinesContainer/VBoxContainer" unique_id=1400146308]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 36
+text = "LINES"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="LinesLabel" type="Label" parent="UI/HUD/HBoxContainer/RightStats/LinesContainer/VBoxContainer" unique_id=665310463]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8249593, 0, 1)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+
+[node name="MainMenu" type="Control" parent="UI" unique_id=1196798541]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/MainMenu" unique_id=611099528]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartButton" type="Button" parent="UI/MainMenu/CenterContainer" unique_id=1441888936]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_iywne")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = ExtResource("7_ssvqc")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_264po")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1kice")
+text = "Start Game"
+
+[node name="GameOverMenu" type="Control" parent="UI" unique_id=2018667270]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="UI/GameOverMenu" unique_id=68572218]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/GameOverMenu" unique_id=1681180938]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverMenu/CenterContainer" unique_id=1628124176]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="LabelGameOver" type="Label" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=2044006831]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(18.892157, 18.892157, 18.892157, 0.5)
+theme_override_fonts/font = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 84
+text = "GAME OVER"
+
+[node name="FinalScoreLabel" type="Label" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=1870159868]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_iywne")
+text = "Final Score: 0"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI/GameOverMenu/CenterContainer/VBoxContainer" unique_id=1094748938]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_ca42v")
+text = "Try Again"
+
+[node name="SoundManager" type="Node" parent="." unique_id=12747307]
+script = ExtResource("8_trtic")
+
+[node name="SfxMove" type="AudioStreamPlayer" parent="SoundManager" unique_id=1034941949]
+stream = ExtResource("8_kvuet")
+
+[node name="SfxRotate" type="AudioStreamPlayer" parent="SoundManager" unique_id=1156602632]
+stream = ExtResource("9_trtic")
+
+[node name="SfxLock" type="AudioStreamPlayer" parent="SoundManager" unique_id=1816311434]
+stream = ExtResource("10_ir15t")
+
+[node name="SfxClear" type="AudioStreamPlayer" parent="SoundManager" unique_id=1240403006]
+stream = ExtResource("11_ca42v")
+
+[node name="SfxGameOver" type="AudioStreamPlayer" parent="SoundManager" unique_id=1455443468]
+stream = ExtResource("12_rysoc")
+
+[node name="SfxGameStart" type="AudioStreamPlayer" parent="SoundManager" unique_id=588289406]
+stream = ExtResource("13_ssvqc")
